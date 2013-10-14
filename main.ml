@@ -8,7 +8,7 @@ let color2grey x = let z = int_of_float ( ( level x ) *. 255.0 ) in (z,z,z)
 let get_dims img =
         ((Sdlvideo.surface_info img).Sdlvideo.w, (Sdlvideo.surface_info img).Sdlvideo.h)
 
-(* Passage d'une immage en niveau de gris (avec parcours) *)
+(* Passage d'une image en niveau de gris (avec parcours) *)
 let image2grey input output = let (w,h) = get_dims input in
         begin
                 for i = 0 to w do
@@ -19,6 +19,27 @@ let image2grey input output = let (w,h) = get_dims input in
                         done
                 done
         end
+(*Calcule le seuil d'une image*)
+let seuil img = 
+	let (w,h) = get_dims img in
+	let t = ref 0 in
+	for i = 0 to w do
+		for j = 0 to h do
+			let (g,_,_) = Sdlvideo.get_pixel_color img i j in
+			t := !t+g
+		done
+	done;
+	!t / (w*h)
+(*Binarisation d'une image*)
+let binarize img dst s = 
+	let (w,h) = get_dims img in
+    for i = 0 to w do
+        for j = 0 to h do
+            let (g,_,_) = Sdlvideo.get_pixel_color img i j in
+			let c = if g >= s then 255 else 0 in
+			Sdlvideo.put_pixel_color dst i j (c, c, c)
+        done
+    done
 
  
 (* init de SDL *)
@@ -63,9 +84,16 @@ let main () =
         (* on attend une touche *)
         wait_key ();
         let newSurface = Sdlvideo.create_RGB_surface_format img [] w h in
+	
                 image2grey img newSurface;
                 show newSurface display;
                 wait_key ();
+	let bin = Sdlvideo.create_RGB_surface_format img [] w h in
+        let s = seuil img in
+	binarize img bin s;
+	show bin display;
+	wait_key ();
+
         (* on quitte *)
         exit 0
   end
