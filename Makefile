@@ -7,7 +7,7 @@ LIBS = bigarray sdl sdlloader
 INCDIRS= +sdl
 
 # Donenr les fichers souces de votre programme
-SOURCES = img.ml main.ml 
+SOURCES = matrix.ml img.ml main.ml 
 RESULT = ObjectiveCrapRecognition
 
 all: native-code
