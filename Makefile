@@ -3,11 +3,11 @@ OCAMLMAKEFILE = OCamlMakefile
 ####################################
 
 # Donner la liste des librairies utilisées, et dé-commmenter si non vide
-LIBS = bigarray sdl sdlloader 
+LIBS = bigarray sdl sdlloader
 INCDIRS= +sdl
 
 # Donenr les fichers souces de votre programme
-SOURCES = main.ml 
+SOURCES = img.ml main.ml 
 RESULT = ObjectiveCrapRecognition
 
 all: native-code
