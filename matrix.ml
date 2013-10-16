@@ -21,6 +21,9 @@ let height m =
 let set m x y v =
   m.(y).(x) <- v
 
+let get m x y =
+  m.(y).(x)
+
 let iter f m =
   let parcours m2 = Array.iter f m2 in
   Array.iter parcours m
@@ -30,7 +33,23 @@ let iteri f m =
   let parcours y m2 = Array.iteri (f2 y) m2 in
   Array.iteri parcours m
 
-(* La fonction ne compile pas
+(* Transforme une image noir et blanc en une matrice *)
+let from_img img =
+  let f x y = let (c,_,_) =
+      Sdlvideo.get_pixel_color img x y in
+      c in
+  let (w,h) = ((Sdlvideo.surface_info img).Sdlvideo.w, (Sdlvideo.surface_info img).Sdlvideo.h) in
+  init w h f
+
+(* Transforme une matrice en image noir et blanc *)
+let to_img m =
+  let img = Sdlvideo.create_RGB_surface [] (width m) (height m) 24
+  Int32.zero Int32.zero Int32.zero Int32.zero in
+  let copy x y c =
+    Sdlvideo.put_pixel_color img x y (c,c,c) in
+  iteri copy m;
+  img
+
 
 (* Produit des matrices m1 et m2 *)
 let produit m1 m2 =
@@ -39,9 +58,7 @@ let produit m1 m2 =
     let r = ref 0 in
     for i=0 to w do
       r := !r + m1.(y).(i) * m2.(i).(x)
-    done
+    done;
     !r
      in
     init w w f
-
-*)
