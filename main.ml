@@ -6,20 +6,22 @@ let color2grey x = let z = int_of_float ( ( level x ) *. 255.0 ) in (z,z,z)
 
 (* Dimentions d'une image *)
 let get_dims img =
-        ((Sdlvideo.surface_info img).Sdlvideo.w, (Sdlvideo.surface_info img).Sdlvideo.h)
+    ((Sdlvideo.surface_info img).Sdlvideo.w, (Sdlvideo.surface_info img).Sdlvideo.h)
 
 (* Passage d'une image en niveau de gris (avec parcours) *)
 let image2grey input output = let (w,h) = get_dims input in
-        begin
-                for i = 0 to w do
-                        for j = 0 to h do
-                                let c = Sdlvideo.get_pixel_color input i j in
-                                let n = color2grey c in
-                                Sdlvideo.put_pixel_color output i j n
-                        done
-                done
-        end
+    begin
+       for i = 0 to w do
+            for j = 0 to h do
+                let c = Sdlvideo.get_pixel_color input i j in
+                let n = color2grey c in
+                Sdlvideo.put_pixel_color output i j n
+            done
+        done
+    end
+
 (*Calcule le seuil d'une image*)
+(* seuil : Sdlvideo.Surface -> int *)
 let seuil img = 
 	let (w,h) = get_dims img in
 	let t = ref 0 in
@@ -30,7 +32,9 @@ let seuil img =
 		done
 	done;
 	!t / (w*h)
+
 (*Binarisation d'une image*)
+(* binarize : Sdlvideo.Surface -> Sdlvideo.Surface -> int -> () *)
 let binarize img dst s = 
 	let (w,h) = get_dims img in
     for i = 0 to w do
@@ -41,6 +45,14 @@ let binarize img dst s =
         done
     done
 
+let rec minMax3 (a, b, c) = 
+    if b > a then 
+        minMax3 (b, a, c) 
+    else 
+        if c > b then
+            minMax3 (a, c, b)
+        else
+            (a, b, c) 
  
 (* init de SDL *)
 let sdl_init () =
