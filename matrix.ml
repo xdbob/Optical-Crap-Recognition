@@ -51,8 +51,6 @@ let to_img m =
   img
 
 
-(* La fonction ne compile pas
-
 (* Produit des matrices m1 et m2 *)
 let produit m1 m2 =
   let w = width m1 in
@@ -60,9 +58,7 @@ let produit m1 m2 =
     let r = ref 0 in
     for i=0 to w do
       r := !r + m1.(y).(i) * m2.(i).(x)
-    done
+    done;
     !r
      in
     init w w f
-
-*)
