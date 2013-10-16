@@ -1,20 +1,13 @@
-######### do not erase #############
-OCAMLMAKEFILE = OCamlMakefile
-####################################
 
-# Donner la liste des librairies utilisées, et dé-commmenter si non vide
-LIBS = bigarray sdl sdlloader
-INCDIRS= +sdl
+SRCDIR = src
+EXECDIR = .
+EXEC = $(EXECDIR)/ObjectiveCrapRecognition
+MAKESRC = $(MAKE) -C $(SRCDIR) 
 
-# Donenr les fichers souces de votre programme
-SOURCES = matrix.ml img.ml main.ml 
-RESULT = ObjectiveCrapRecognition
+all: $(EXEC)
 
-all: native-code
+$(EXEC):
+	@$(MAKESRC)
 
-# Dé-commenter pour une application utilisant les threads
-# THREADS=yes
-
-######### do not erase #############
--include $(OCAMLMAKEFILE)
-####################################
+clean:
+	@$(MAKESRC) clean
