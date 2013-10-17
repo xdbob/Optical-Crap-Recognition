@@ -32,7 +32,6 @@ let main () =
     let (w,h) = Img.get_dims img in
     (* On crée la surface d'affichage en doublebuffering *)
     let display = Sdlvideo.set_video_mode w h [`DOUBLEBUF] in
-<<<<<<< HEAD
     show img display;
     wait_key ();
     (*Binarisation*)
