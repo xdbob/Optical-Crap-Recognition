@@ -1,13 +1,20 @@
+######### do not erase #############
+OCAMLMAKEFILE = src/OCamlMakefile
+####################################
 
-SRCDIR = src
-EXECDIR = .
-EXEC = $(EXECDIR)/ObjectiveCrapRecognition
-MAKESRC = $(MAKE) -C $(SRCDIR) 
+# Donner la liste des librairies utilisées, et dé-commmenter si non vide
+LIBS = bigarray sdl sdlloader
+INCDIRS= +sdl
 
-all: $(EXEC)
+# Donenr les fichers souces de votre programme
+SOURCES = src/matrix.ml src/img.ml src/main.ml 
+RESULT = ./ObjectiveCrapRecognition
 
-$(EXEC):
-	@$(MAKESRC)
+all: native-code
 
-clean:
-	@$(MAKESRC) clean
+# Dé-commenter pour une application utilisant les threads
+# THREADS=yes
+
+######### do not erase #############
+-include $(OCAMLMAKEFILE)
+####################################
