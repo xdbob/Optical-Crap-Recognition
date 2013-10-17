@@ -39,3 +39,21 @@ let binarize m s =
       0
   in
   Matrix.init w h f
+
+(*Best rotation sans detection d'angle EU*)
+let rotate input angle =
+    let (w,h) = Matrix.get_dims input in
+    let f x y =
+        begin
+            let i = float_of_int x in
+            let j = float_of_int y in
+            let x2 = int_of_float (i *. (sin angle) +.
+                                 j *. (cos angle)) in
+            let y2 = int_of_float(i *. (cos angle) -.
+                                 j *. (sin angle)) in
+            if (x2 >= 0 && x2 < w) && (y2 >= 0 && y2 < h) then
+                Matrix.get input x2 y2
+            else
+                255
+        end in
+    Matrix.init w h f

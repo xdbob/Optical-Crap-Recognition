@@ -32,6 +32,7 @@ let main () =
     let (w,h) = Img.get_dims img in
     (* On crée la surface d'affichage en doublebuffering *)
     let display = Sdlvideo.set_video_mode w h [`DOUBLEBUF] in
+<<<<<<< HEAD
     show img display;
     wait_key ();
     (*Binarisation*)
@@ -42,6 +43,9 @@ let main () =
             wait_key ();
             let ds_mat = Img.binarize m (Img.seuil m) in
             let ds = Matrix.to_img ( ds_mat ) in
+            show ds display;
+            wait_key ();
+            let ds = Matrix.to_img ( Img.rotate m (3.14 /. 6.) ) in
             show ds display;
             wait_key ();
             let kern = [|[|1;2;1|];[|2;4;2|];[|1;2;1|]|] in
