@@ -4,7 +4,7 @@ OCAMLMAKEFILE = src/OCamlMakefile
 
 # Donner la liste des librairies utilisées, et dé-commmenter si non vide
 LIBS = bigarray sdl sdlloader
-INCDIRS= +sdl
+INCDIRS= +sdl +site-lib/sdl
 
 # Donenr les fichers souces de votre programme
 SOURCES = src/matrix.ml src/img.ml src/main.ml 
