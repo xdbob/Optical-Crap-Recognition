@@ -43,7 +43,7 @@ let main () =
         let newSurface = Sdlvideo.create_RGB_surface_format img [] w h in
                 Img.image2grey img newSurface;
                 let m = Matrix.from_img img in
-                let ds = Matrix.to_img ( Img.binarize m (Img.seuil m)) in
+                let ds = Matrix.to_img ( Img.rotate m (3.14 /. 6.) ) in
                 show ds display;
                 wait_key ();
         (* on quitte *)
