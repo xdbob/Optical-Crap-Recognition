@@ -19,24 +19,23 @@ let image2grey input output = let (w,h) = get_dims input in
                         done
                 done
         end
-(*Calcule le seuil d'une image*)
-let seuil img = 
-	let (w,h) = get_dims img in
+(*Calcule le seuil d'une matrice *)
+let seuil matrix = 
+	let (w,h) = Matrix.get_dims matrix in
 	let t = ref 0 in
-	for i = 0 to w do
-		for j = 0 to h do
-			let (g,_,_) = Sdlvideo.get_pixel_color img i j in
-			t := !t+g
-		done
-	done;
-	!t / (w*h)
-(*Binarisation d'une image*)
-let binarize img dst s = 
-	let (w,h) = get_dims img in
-    for i = 0 to w do
-        for j = 0 to h do
-            let (g,_,_) = Sdlvideo.get_pixel_color img i j in
-			let c = if g >= s then 255 else 0 in
-			Sdlvideo.put_pixel_color dst i j (c, c, c)
-        done
-    done
+        let f x = t := !t+x in
+        begin
+          Matrix.iter f matrix;
+	  !t / (w*h)
+        end
+
+(*Binarisation d'une matrice *)
+let binarize m s =
+  let (w,h) = Matrix.get_dims m in
+  let f x y =
+    if (Matrix.get m x y) >= s then
+      255
+    else
+      0
+  in
+  Matrix.init w h f
