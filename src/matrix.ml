@@ -54,14 +54,16 @@ let to_img m =
   img
 
 
-(* Produit des matrices m1 et m2 *)
-let produit m1 m2 =
+(* Produit de convalescence de la matrice m1 et du noyau kern *)
+let produit m1 kern =
   let w = width m1 in
   let f x y =
     let r = ref 0 in
-    for i=0 to w do
-      r := !r + m1.(y).(i) * m2.(i).(x)
-    done;
-    !r
+  for i=0 to w do
+    r := !r + m1.(y).(i) * kern.(i).(x)
+  done;
+  !r/(w*(height kern))
      in
-    init w w f
+  init w w f
+
+
