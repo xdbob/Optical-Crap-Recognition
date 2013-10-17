@@ -17,6 +17,9 @@ let width m =
 let height m =
   Array.length m
 
+let get_dims m =
+  (width m, height m)
+
 (* Met l'élément v à l'emplacement x y ) *)
 let set m x y v =
   m.(y).(x) <- v
