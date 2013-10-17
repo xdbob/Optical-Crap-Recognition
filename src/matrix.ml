@@ -41,7 +41,8 @@ let from_img img =
   let f x y = let (c,_,_) =
       Sdlvideo.get_pixel_color img x y in
       c in
-  let (w,h) = ((Sdlvideo.surface_info img).Sdlvideo.w, (Sdlvideo.surface_info img).Sdlvideo.h) in
+  let (w,h) = 
+    ((Sdlvideo.surface_info img).Sdlvideo.w, (Sdlvideo.surface_info img).Sdlvideo.h) in
   init w h f
 
 (* Transforme une matrice en image noir et blanc *)
@@ -65,16 +66,29 @@ let produit m1 kern =
   !r/(w*(height kern))
      in
   init w w f
-
-let matrix_3 mat x y = 
+(* Générer une matrice 3*3 ou 5*5 ou n*n à partir du centre x y d'une matrice mat *) 
+let submatrix mat x y size = 
     let blank x y = 255 in
-    let new_matrix = init 3 3 blank in
-    for i = x-1 to x+1 do
-        for j = y-1 to y+1 do
+    let new_matrix = init size size blank in
+    for i = x-(size/2) to x+(size/2) do
+        for j = y-(size/2) to y+(size/2) do
             match (i,j) with
                 | (n,_) when (n < 0 || n > (height mat)) -> ()
-                | (_,n) when (n < 0 || n > (width mat))-> ()
-                | (_,_) -> set new_matrix i j (get mat i j)
+                | (_,n) when (n < 0 || n > (width mat)) -> ()
+                | (_,_) -> set new_matrix (i-x) (j-y) (get mat i j)
         done;
     done;
     new_matrix
+
+let insert big small x y =
+    for i = x-((width small)/2) to x+((width small)/2) do
+        for j = y-((height small)/2) to y+((height small)/2) do
+            match (i,j) with
+                | (n,_) when (n < 0 || n > (height big)) -> ()
+                | (_,n) when (n < 0 || n > (width big)) -> ()
+                | (_,_) -> set big i j (get small (i-x) (j-y))
+        done;
+    done;
+    big
+
+ 

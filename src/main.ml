@@ -25,29 +25,37 @@ let show img dst =
 (* main *)
 let main () =
   begin
-    (* Nous voulons 1 argument *)
     if Array.length (Sys.argv) < 2 then
       failwith "Il manque le nom du fichier!";
-    (* Initialisation de SDL *)
     sdl_init ();
-    (* Chargement d'une image *)
     let img = Sdlloader.load_image Sys.argv.(1) in
-    (* On récupère les dimensions *)
     let (w,h) = Img.get_dims img in
     (* On crée la surface d'affichage en doublebuffering *)
     let display = Sdlvideo.set_video_mode w h [`DOUBLEBUF] in
-        (* on affiche l'image *)
-        show img display;
-        (* on attend une touche *)
-        wait_key ();
-        let newSurface = Sdlvideo.create_RGB_surface_format img [] w h in
-                Img.image2grey img newSurface;
-                let m = Matrix.from_img img in
-                let ds = Matrix.to_img ( Img.binarize m (Img.seuil m)) in
-                show ds display;
-                wait_key ();
-        (* on quitte *)
-        exit 0
+    show img display;
+    wait_key ();
+    (*Binarisation*)
+    let newSurface = Sdlvideo.create_RGB_surface_format img [] w h in
+            Img.image2grey img newSurface;
+            let m = Matrix.from_img img in
+            show newSurface display;
+            wait_key ();
+            let ds_mat = Img.binarize m (Img.seuil m) in
+            let ds = Matrix.to_img ( ds_mat ) in
+            show ds display;
+            wait_key ();
+            let kern = [|[|1;2;1|];[|2;4;2|];[|1;2;1|]|] in
+            for i = 0 to w do
+                for j = 0 to h do  
+                    let mp = Matrix.submatrix ds_mat i j 3 in
+                    let result = Matrix.produit mp kern in
+                    Matrix.insert ds_mat mp i j
+                done    
+            done;
+            show (Matrix.to_img ds_mat) display;
+            wait_key();
+    (* on quitte *)
+    exit 0
   end
  
 let _ = main ()
