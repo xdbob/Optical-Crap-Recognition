@@ -44,7 +44,10 @@ let main () =
             let ds = Matrix.to_img ( ds_mat ) in
             show ds display;
             wait_key ();
-            let ds = Matrix.to_img ( Img.rotate m (20.) ) in
+	    let ds = Matrix.to_img ( Img.reverse m ) in
+	    show ds display;
+	    wait_key ();
+            let ds = Matrix.to_img ( Img.rotate (Img.reverse m) 10. ) in
             show ds display;
             wait_key ();
             let kern = [|[|1;2;1|];[|2;4;2|];[|1;2;1|]|] in
