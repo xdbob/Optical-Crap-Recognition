@@ -40,12 +40,27 @@ let binarize m s =
   in
   Matrix.init w h f
 
+(*Best inversement d'image EU*)
+let reverse input = 
+	let (w,h) = Matrix.get_dims input in
+		let f x y = 
+	begin
+	   let x_alternate = w - x in
+	   if (x_alternate >= 0 && x_alternate < w) then
+		Matrix.get input x_alternate y
+	   else 
+		0
+	end in
+  Matrix.init w h f
+
 (*Best rotation sans detection d'angle EU*)
 let rotate input angle =
-    let (w,h) = Matrix.get_dims input in
-let angle_tmp = ((angle *. 2. *. 3.141592653589793) /. 360.) -. (3.141592653589793 /. 2.) in
-let wf = (float_of_int w) /. 2.0 in
-let hf = (float_of_int h) /. 2.0 in
+  let input = reverse input in
+  let (w,h) = Matrix.get_dims input in
+  let angle_tmp = ((angle *. 2. *. 3.141592653589793) /. 360.)
+  -. (3.141592653589793 /. 2.) in
+  let wf = (float_of_int w) /. 2.0 in
+  let hf = (float_of_int h) /. 2.0 in
     let f x y =
         begin
             let i = float_of_int x  in
@@ -60,17 +75,3 @@ let hf = (float_of_int h) /. 2.0 in
 	        0 
         end in
     Matrix.init w h f
-
-(*Best inversement d'image EU*)
-let reverse input = 
-	let (w,h) = Matrix.get_dims input in
-		let f x y = 
-	begin
-	   let x_alternate = w - x in
-	   if (x_alternate >= 0 && x_alternate < w) then
-		Matrix.get input x_alternate y
-	   else 
-		0
-	end in
-  Matrix.init w h f
-			
