@@ -40,23 +40,25 @@ let main () =
             let m = Matrix.from_img img in
             show newSurface display;
             wait_key ();
+            (* Filtre passe bas *)
             let ds_mat = Img.binarize m (Img.seuil m) in
             let ds = Matrix.to_img ( ds_mat ) in
             show ds display;
             wait_key ();
-            let ds = Matrix.to_img ( Img.rotate m (3.14 /. 6.) ) in
-            show ds display;
-            wait_key ();
+            (* Filtre passe bas *)
             let kern = [|[|1;2;1|];[|2;4;2|];[|1;2;1|]|] in
             for i = 0 to w do
                 for j = 0 to h do  
-                    let mp = Matrix.submatrix ds_mat i j 3 in
-                    let result = Matrix.produit mp kern in
-                    Matrix.insert ds_mat mp i j
-                done    
+                        let mp = Matrix.submatrix ds_mat i j 3 in
+                        let result = Matrix.produit mp kern in
+                        Matrix.insert ds_mat result i j 3;
+                done        
             done;
             show (Matrix.to_img ds_mat) display;
             wait_key();
+            let ds = Matrix.to_img ( Img.rotate m (3.14 /. 6.) ) in
+            show ds display;
+            wait_key ();
     (* on quitte *)
     exit 0
   end

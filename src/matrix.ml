@@ -57,15 +57,18 @@ let to_img m =
 
 (* Produit de convalescence de la matrice m1 et du noyau kern *)
 let produit m1 kern =
-  let w = width m1 in
-  let f x y =
-    let r = ref 0 in
-  for i=0 to w do
-    r := !r + m1.(y).(i) * kern.(i).(x)
-  done;
-  !r/(w*(height kern))
-     in
-  init w w f
+    let w = width m1 in
+    let f x y = 0 in
+    let nmatrix = init w w f in
+    for i=0 to w-1 do
+        for j=0 to w-1 do
+            for k=0 to w-1 do
+                set nmatrix i j ((get m1 i k)*(get kern k j)+(get nmatrix i j));
+           done
+       done
+    done;
+    nmatrix
+
 (* Générer une matrice 3*3 ou 5*5 ou n*n à partir du centre x y d'une matrice mat *) 
 let submatrix mat x y size = 
     let blank x y = 255 in
@@ -73,22 +76,22 @@ let submatrix mat x y size =
     for i = x-(size/2) to x+(size/2) do
         for j = y-(size/2) to y+(size/2) do
             match (i,j) with
-                | (n,_) when (n < 0 || n > (height mat)) -> ()
-                | (_,n) when (n < 0 || n > (width mat)) -> ()
-                | (_,_) -> set new_matrix (i-x) (j-y) (get mat i j)
+                | (n,_) when (n < 0 || n > (height mat)-1) -> ()
+                | (_,n) when (n < 0 || n > (width mat)-1) -> ()
+                | (_,_) -> set new_matrix ((i-x)+size/2) ((j-y)+size/2) (get mat i j ); 
         done;
     done;
     new_matrix
 
-let insert big small x y =
-    for i = x-((width small)/2) to x+((width small)/2) do
-        for j = y-((height small)/2) to y+((height small)/2) do
+let insert big small x y size =
+    for i = x-(size/2) to x+(size/2) do
+        for j = y-(size/2) to y+(size/2) do
             match (i,j) with
-                | (n,_) when (n < 0 || n > (height big)) -> ()
-                | (_,n) when (n < 0 || n > (width big)) -> ()
-                | (_,_) -> set big i j (get small (i-x) (j-y))
+                | (n,_) when (n < 0 || n > (height big)-1) -> ()
+                | (_,n) when (n < 0 || n > (width big)-1) -> ()
+                | (_,_) -> set big i j (get small ((i-x)+size/2) ((j-y)+size/2))
         done;
     done;
     big
 
- 
+
