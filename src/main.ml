@@ -52,11 +52,15 @@ let main () =
                         let mp = Matrix.submatrix ds_mat i j 3 in
                         let result = Matrix.produit mp kern in
                         Matrix.insert ds_mat result i j 3;
-                done        
+                done     
             done;
             show (Matrix.to_img ds_mat) display;
             wait_key();
-            let ds = Matrix.to_img ( Img.rotate m (3.14 /. 6.) ) in
+
+	    let ds = Matrix.to_img ( Img.reverse m ) in
+	    show ds display;
+	    wait_key ();
+            let ds = Matrix.to_img ( Img.rotate m 10. ) in
             show ds display;
             wait_key ();
     (* on quitte *)
