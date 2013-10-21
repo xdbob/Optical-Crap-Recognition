@@ -34,7 +34,6 @@ let main () =
     let display = Sdlvideo.set_video_mode w h [`DOUBLEBUF] in
     show img display;
     wait_key ();
-    (*Binarisation*)
     let newSurface = Sdlvideo.create_RGB_surface_format img [] w h in
             Img.image2grey img newSurface;
             let m = Matrix.from_img img in
