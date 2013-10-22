@@ -54,6 +54,40 @@ let to_img m =
   iteri copy m;
   img
 
+(* Produit matriciel entre x et y *)
+let mult x y =
+  let n = height x in
+  let f i j =
+    let r = ref 0. in
+    for k=0 to n-1 do
+      r := !r +. ((get x i k) *. (get y k j))
+    done;
+    !r in
+  init (width x) (height y) f
+
+(* Addition avec une constante *)
+let plus m1 m2 =
+  let w = max (width m1) (width m2) in
+  let h = max (height m1) (height m2) in
+  let g m x y = if x < 0 || y < 0 || x >= width m || y >= height m then
+    0.
+  else
+    get m x y in
+  let f x y = (g m1 x y) +. (g m2 x y) in
+  init w h f
+    
+
+(* Transforme un tableau en matrice (sur une colonne) *)
+let to_column t =
+  let f _ y =
+    t.(y) in
+  init 1 (Array.length t) f
+
+(* Transforme un tableau en matrice (sur une ligne) *)
+let to_line t =
+  let f x _ =
+    t.(x) in
+  init (Array.length t) 1 f
 
 (* Produit de convalescence de la matrice m1 et du noyau kern *)
 let produit m1 kern =
