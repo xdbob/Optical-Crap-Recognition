@@ -89,6 +89,22 @@ let to_line t =
     t.(x) in
   init (Array.length t) 1 f
 
+(* Renvoi la x-ième ligne de la matrice *)
+let get_line m y =
+  let f x = get m x y in
+  Array.init (width m) f
+
+(* Renvoi la x-ième colonne de la matrice *)
+let get_column m x =
+  let f y = get m x y in
+  Array.init (height m) f
+
+(* Transforme les colonnes en ligne et inversement *)
+let transpose m =
+  let f x y = get m y x in
+  let (w,h) = get_dims m in
+  init h w f
+
 (* Produit de convalescence de la matrice m1 et du noyau kern *)
 let produit m1 kern =
     let w = width m1 in
