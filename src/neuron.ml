@@ -37,7 +37,7 @@ module Layer =
       let nb = Matrix.width la.weight in
       for i=0 to nb - 1 do
         let x = ref 0. in
-        let f i y = x := !x +. ( y *. (inp.(i)) ) in
+        let f i y = x := !x +. ( y *. (inp.(i)) ) -. la.bias.(i) in
         Array.iteri f (Matrix.get_column la.weight i);
         la.o.(i) <- !x
       done;
@@ -76,3 +76,60 @@ module Layer =
         la.s.(i) <- (la.f' la.o.(i)) *. v.(i)
       done
   end
+
+  module Network =
+    struct
+
+      (* Fabrique un réseau avec [ne] entrées et n niveaux
+       * où le niveau i à [si] neurones *)
+      let make ne g t =
+        let f i = Layer.make (if i=0 then ne else t.(i-1)) t.(i)
+        g Layer.trans Layer.trans' in
+        Array.init (Array.length t) f
+
+      (* Sortie du réseau [nt] avec l'entrée [p] *)
+      let eval nt p = Array.fold_left (fun x la -> Layer.eval la x) p nt
+
+      (* Apprentissage du réseau [nt] qui apprends ce que [p] devrait retourner [d] *)
+      let learn nt p d =
+        let len = Array.length nt in
+        ignore(eval nt p);
+        Layer.last_retropropagate nt.(len - 1) d;
+        for i = len - 2 downto 0 do
+          Layer.retropropagate nt.(i) nt.(i+1);
+        done;
+        Layer.update nt.(0) p;
+        for i=1 to len - 1 do
+          let l = nt.(i-1) in
+          let a = Array.init (Array.length l.Layer.o) (fun x -> l.Layer.f l.Layer.o.(x)) in
+          Layer.update nt.(i) a
+        done
+
+      (* Entraine le réseau [nt] avec [base], [n] fois *)
+      let training nt base n =
+        for i=0 to n-1 do
+          for j=0 to (Array.length base) - 1 do
+            learn nt (fst base.(j)) (snd base.(j))
+          done
+        done
+
+      let error_rate nt d =
+        let len = Array.length nt in
+        let l = nt.(len-1) in
+        let d0 = Array.init (Array.length l.Layer.o) (fun x -> l.Layer.f l.Layer.o.(x)) in
+        let ds = Array.init (Array.length d0) (fun x -> d.(x) -. d0.(x)) in
+        let x = ref 0. in
+        Array.iter (fun y -> x := !x +. y) ds;
+        sqrt (!x)
+
+      
+      let set_of_bool = Array.map (function true -> 0.95 | false -> 0.05)
+      let bool_of_set = Array.map ((<=) 0.5)
+      let base_of_bool = Array.map set_of_bool
+
+      let evalb nt p = bool_of_set (eval nt (set_of_bool p))
+      let learnb nt p d = learn nt (set_of_bool p) (set_of_bool d)
+      let training nt base n =
+        let b = Array.map (fun (i,j) -> set_of_bool i,set_of_bool j) base in
+        training nt b n
+    end
