@@ -35,13 +35,13 @@ module Layer =
     (* Création de la sortie de la couche *)
     let eval la inp =
       let nb = Matrix.width la.weight in
-      for i=0 to nb do
+      for i=0 to nb - 1 do
         let x = ref 0. in
         let f i y = x := !x +. ( y *. (inp.(i)) ) in
-        Array.iteri f la.weight.(i);
-        Array.set la.o i !x
+        Array.iteri f (Matrix.get_column la.weight i);
+        la.o.(i) <- !x
       done;
-      la.o
+      Array.init (Array.length la.o) (fun x -> la.f la.o.(x))
 
     (* Met à jour la couche avec l'entrée *)
     let update la inp =
@@ -53,5 +53,26 @@ module Layer =
       for i=0 to (Array.length la.bias) - 1 do
         la.bias.(i) <- tmp.(i)
       done
-      
+     
+    (* Rétropropagation pour le dernier niveau *)
+    let last_retropropagate la d =
+      let a = Array.init (Array.length la.o) (fun x -> la.f la.o.(x)) in
+      let e = Array.init (Array.length a) (fun x -> d.(x) -. a.(x)) in
+      for i=0 to (Array.length e) - 1 do
+        la.s.(i) <- (la.f' a.(i)) *. e.(i)
+      done
+
+    (* Rétropropagation sur les autres niveaux *)
+    let retropropagate la la' = 
+      let nb = Matrix.width la.weight in
+      let tmp = Matrix.transpose la'.weight in
+      let fct i = 
+         let x = ref 0. in
+         let f i y = x := !x +. ( y *. la'.s.(i) ) in
+         Array.iteri f (Matrix.get_column tmp i);
+         !x  in
+      let v = Array.init (nb - 1) fct in
+      for i=0 to (Array.length la.s) - 1 do
+        la.s.(i) <- (la.f' la.o.(i)) *. v.(i)
+      done
   end
