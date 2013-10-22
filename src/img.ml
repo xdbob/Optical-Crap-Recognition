@@ -82,7 +82,7 @@ let rotate input angle =
 let hough matrice =
         (* Declaration des constantes *)
         let pi = acos(-1.) and pi02 = asin(1.) in
-        let (w,h) = (Array.length matrice,Array.length matrice.(0)) in
+        let (w,h) = Matrix.get_dims matrice in
         let diagonal = int_of_float(sqrt(float_of_int(w*w+ h*h))) in
         let matrice_de_vote = Array.make_matrix diagonal ((int_of_float(pi*.100.))+1) 0 in
         (* on declare les variables qu'on va remplire : a savoir teta max et l
@@ -92,7 +92,7 @@ let hough matrice =
         (* Allez les noobs, on va parcourire l'image *)
         for y=0 to h-1 do
            for x=0 to w-1 do
-              if (matrice.(x).(y) == (0,0,0)) then
+              if (Matrix.get matrice x y == 0) then
                 begin
              (* t est l angle qu on fera variee -pi/2 a pi/2 *)
                 let t = ref(-.pi02) in
