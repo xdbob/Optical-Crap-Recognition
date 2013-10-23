@@ -37,9 +37,9 @@ module Layer =
       let nb = Matrix.width la.weight in
       for i=0 to nb - 1 do
         let x = ref 0. in
-        let f i y = x := !x +. ( y *. (inp.(i)) ) -. la.bias.(i) in
+        let f i y = x := !x +. ( y *. (inp.(i)) ) in
         Array.iteri f (Matrix.get_column la.weight i);
-        la.o.(i) <- !x
+        la.o.(i) <- !x -. la.bias.(i)
       done;
       Array.init (Array.length la.o) (fun x -> la.f la.o.(x))
 
@@ -71,7 +71,7 @@ module Layer =
          let f i y = x := !x +. ( y *. la'.s.(i) ) in
          Array.iteri f (Matrix.get_column tmp i);
          !x  in
-      let v = Array.init (nb - 1) fct in
+      let v = Array.init nb fct in
       for i=0 to (Array.length la.s) - 1 do
         la.s.(i) <- (la.f' la.o.(i)) *. v.(i)
       done
@@ -89,7 +89,7 @@ module Layer =
 
       (* Sortie du réseau [nt] avec l'entrée [p] *)
       let eval nt p = Array.fold_left (fun x la -> Layer.eval la x) p nt
-
+      
       (* Apprentissage du réseau [nt] qui apprends ce que [p] devrait retourner [d] *)
       let learn nt p d =
         let len = Array.length nt in
@@ -129,7 +129,7 @@ module Layer =
 
       let evalb nt p = bool_of_set (eval nt (set_of_bool p))
       let learnb nt p d = learn nt (set_of_bool p) (set_of_bool d)
-      let training nt base n =
+      let trainingb nt base n =
         let b = Array.map (fun (i,j) -> set_of_bool i,set_of_bool j) base in
         training nt b n
     end
