@@ -113,7 +113,7 @@ let produit m1 kern =
     for i=0 to w-1 do
         for j=0 to w-1 do
             for k=0 to w-1 do
-                set nmatrix i j ((get m1 i k)*(get kern k j)+(get nmatrix i j));
+                set nmatrix i j (((get m1 i k)*(get kern k j)+(get nmatrix i j)));
            done
        done
     done;
@@ -142,6 +142,6 @@ let insert big small x y size =
                 | (_,_) -> set big i j (get small ((i-x)+size/2) ((j-y)+size/2))
         done;
     done;
-    big
+    ()
 
 
