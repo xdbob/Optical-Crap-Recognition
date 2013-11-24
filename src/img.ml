@@ -19,6 +19,11 @@ let image2grey input output = let (w,h) = get_dims input in
                         done
                 done
         end
+(* Crée une nouvelle surface SDL au même format que l'image donnée *)
+let new_img img = 
+    let (w, h) = get_dims img in
+    Sdlvideo.create_RGB_surface_format img [] w h
+
 (*Calcule le seuil d'une matrice *)
 let seuil matrix = 
 	let (w,h) = Matrix.get_dims matrix in
@@ -117,3 +122,64 @@ let hough matrice =
            done;
         done;
         (!teta_max)
+
+(* Convolution *)
+let get_rgb img x y =
+  let (width, height) = get_dims img in
+  if (x < 0) || (x >= width) then (255,255,255) else
+  if (y < 0) || (y >= height) then (255,255,255) else  (* feed borders with white *)
+  Sdlvideo.get_pixel_color img x y
+ 
+ 
+let convolve_get_value img kernel divisor offset = fun x y ->
+  let sum_r = ref 0.0
+  and sum_g = ref 0.0
+  and sum_b = ref 0.0 in
+ 
+  for i = -1 to 1 do
+    for j = -1 to 1 do
+      let r, g, b = get_rgb img (x+i) (y+j) in
+      sum_r := !sum_r +. kernel.(j+1).(i+1) *. (float r);
+      sum_g := !sum_g +. kernel.(j+1).(i+1) *. (float g);
+      sum_b := !sum_b +. kernel.(j+1).(i+1) *. (float b);
+    done;
+  done;
+  ( !sum_r /. divisor +. offset,
+    !sum_g /. divisor +. offset,
+    !sum_b /. divisor +. offset )
+ 
+ 
+let color_to_int (r,g,b) =
+  (truncate r,
+   truncate g,
+   truncate b)
+ 
+let bounded (r,g,b) =
+  ((max 0 (min r 255)),
+   (max 0 (min g 255)),
+   (max 0 (min b 255))) 
+ 
+let convolve_value ~img ~kernel ~divisor ~offset =
+  let (width, height) = get_dims img in
+  let res = new_img img in
+ 
+  let conv = convolve_get_value img kernel divisor offset in
+ 
+  for y = 0 to pred height do
+    for x = 0 to pred width do
+      let color = conv x y in
+      let color = color_to_int color in
+      Sdlvideo.put_pixel_color res x y (bounded color);
+    done;
+  done;
+    print_string "ok\n";
+  (res)
+
+let sharpen img =
+    let kernel = [|
+        [| -1.; -1.; -1. |];
+        [| -1.;  9.; -1. |];
+        [| -1.; -1.; -1. |];|] 
+    in
+    convolve_value ~img ~kernel ~divisor:1.0 ~offset:0.0
+    

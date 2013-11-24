@@ -144,4 +144,8 @@ let insert big small x y size =
     done;
     ()
 
+let get_bigarray img x y = 
+	let _, arr,_,_ = img in
+	Bigarray.Array2.get arr x y
+
 

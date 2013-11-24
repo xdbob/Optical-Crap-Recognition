@@ -32,29 +32,21 @@ let main () =
     let (w,h) = Img.get_dims img in
     (* On crée la surface d'affichage en doublebuffering *)
     let display = Sdlvideo.set_video_mode w h [`DOUBLEBUF] in
+    let newSurface = Sdlvideo.create_RGB_surface_format img [] w h in
+    let m = Matrix.from_img img in
+    let ds_mat = Img.binarize m (Img.seuil m) in
+    let ds = Matrix.to_img ( ds_mat ) in
     show img display;
     wait_key ();
-    let newSurface = Sdlvideo.create_RGB_surface_format img [] w h in
-            Img.image2grey img newSurface;
-            let m = Matrix.from_img img in
-            show newSurface display;
-            wait_key ();
-            (* Filtre passe bas *)
-            let ds_mat = Img.binarize m (Img.seuil m) in
-            let ds = Matrix.to_img ( ds_mat ) in
-            show ds display;
-            wait_key ();
-            (* Filtre passe bas *)
-            let kern = [|[|1;2;1|];[|2;4;2|];[|1;2;1|]|] in
-            for i = 0 to w do
-                for j = 0 to h do  
-                        let mp = Matrix.submatrix ds_mat i j 3 in
-                        let result = Matrix.produit mp kern in
-                        Matrix.insert ds_mat result i j 3;
-                done     
-            done;
-            show (Matrix.to_img ds_mat) display;
-            wait_key();
+    Img.image2grey img newSurface;
+    show newSurface display;
+    wait_key ();
+    show ds display;
+    wait_key ();
+    (* Filtre passe bas *)
+    let img_convolved = Img.sharpen img in
+    show img_convolved display;
+    wait_key();
 
 	    let ds = Matrix.to_img ( Img.reverse m ) in
 	    show ds display;
