@@ -25,6 +25,16 @@ let show img dst =
 (* main *)
 let main () =
   begin
+    let reseau = Perceptron.Network.make 2 [|2;1;1|] in
+    let xor x y = (x & (not y)) or ((not x) & y) in
+    Random.self_init ();
+    let tab = Array.init 5000 (fun _ -> Array.init 2 (fun _ -> Random.bool())) in
+    let res = Array.init 5000 (fun x -> xor tab.(x).(0) tab.(x).(1)) in
+    for i=0 to 4999 do
+      Perceptron.Network.learnb reseau tab.(i) [|res.(i)|]
+    done;
+    print_string (string_of_bool ((Perceptron.Network.evalb reseau [|true;false|]).(0)));
+    print_string "\n";
     if Array.length (Sys.argv) < 2 then
       failwith "Il manque le nom du fichier!";
     sdl_init ();
@@ -59,7 +69,9 @@ let main () =
 	    let ds = Matrix.to_img ( Img.reverse m ) in
 	    show ds display;
 	    wait_key ();
-            let ds = Matrix.to_img ( Img.rotate m 10. ) in
+            let angle = Img.hough m in
+            print_float angle;
+            let ds = Matrix.to_img ( Img.rotate m angle ) in
             show ds display;
             wait_key ();
     (* on quitte *)

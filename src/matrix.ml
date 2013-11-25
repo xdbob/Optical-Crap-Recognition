@@ -40,9 +40,11 @@ let iteri f m =
 let from_img img =
   let f x y = let (c,_,_) =
       Sdlvideo.get_pixel_color img x y in
-      c in
+      c 
+  in
   let (w,h) = 
-    ((Sdlvideo.surface_info img).Sdlvideo.w, (Sdlvideo.surface_info img).Sdlvideo.h) in
+    ((Sdlvideo.surface_info img).Sdlvideo.w,
+    (Sdlvideo.surface_info img).Sdlvideo.h) in
   init w h f
 
 (* Transforme une matrice en image noir et blanc *)
