@@ -43,8 +43,8 @@ let main () =
     show ds display;
     wait_key ();
     (* Filtre passe bas *)
-    let img_convolved = Img.sharpen img in
-    show img_convolved display;
+    let img_convolved = Img.sharpen m in
+    show (Matrix.to_img img_convolved) display;
     wait_key();
 
 	    let ds = Matrix.to_img ( Img.reverse m ) in
