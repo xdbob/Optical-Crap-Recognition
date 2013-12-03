@@ -2,39 +2,47 @@
  * en applicant la fonction f x y *)
 
 let init w h f =
-  let f2 y x = f x y in
-  let fct x = Array.init w ( f2 x ) in
-  Array.init h fct
+  let tab = Bigarray.Array2.create Bigarray.int Bigarray.c_layout w h in
+  for i=0 to w -1 do
+    for j=0 to h - 1 do
+      tab.{i,j} <- f i j
+    done
+  done;
+  tab
 
 (* retourne la largeur d'une matrice *)
 let width m = 
-  if Array.length m = 0 then
-    0
-  else
-    Array.length m.(0)
+  Bigarray.Array2.dim1 m
 
 (* retourne la hauteur d'une matrice (Simple binding de Array.length) *)
 let height m =
-  Array.length m
+  Bigarray.Array2.dim2 m
 
 let get_dims m =
   (width m, height m)
 
 (* Met l'élément v à l'emplacement x y ) *)
 let set m x y v =
-  m.(y).(x) <- v
+  m.{x,y} <- v
 
 let get m x y =
-  m.(y).(x)
+  m.{x,y}
 
 let iter f m =
-  let parcours m2 = Array.iter f m2 in
-  Array.iter parcours m
+  let (w,h) = get_dims m in
+  for i=0 to w - 1 do
+    for j=0 to h - 1 do
+      f m.{i,j}
+    done
+  done
 
 let iteri f m =
-  let f2 y x = f x y in
-  let parcours y m2 = Array.iteri (f2 y) m2 in
-  Array.iteri parcours m
+  let (w,h) = get_dims m in
+  for i=0 to w - 1 do
+    for j=0 to h - 1 do
+      f i j m.{i,j}
+    done
+  done
 
 (* Transforme une image noir et blanc en une matrice *)
 let from_img img =
@@ -55,7 +63,7 @@ let to_img m =
     Sdlvideo.put_pixel_color img x y (c,c,c) in
   iteri copy m;
   img
-
+(*
 (* Produit matriciel entre x et y *)
 let mult x y =
   let n = height x in
@@ -77,7 +85,7 @@ let plus m1 m2 =
     get m x y in
   let f x y = (g m1 x y) +. (g m2 x y) in
   init w h f
-    
+  *)  
 
 (* Transforme un tableau en matrice (sur une colonne) *)
 let to_column t =
@@ -93,13 +101,11 @@ let to_line t =
 
 (* Renvoi la x-ième ligne de la matrice *)
 let get_line m y =
-  let f x = get m x y in
-  Array.init (width m) f
+  Bigarray.Array2.slice_left m y
 
 (* Renvoi la x-ième colonne de la matrice *)
 let get_column m x =
-  let f y = get m x y in
-  Array.init (height m) f
+  Bigarray.Array2.slice_right m x
 
 (* Transforme les colonnes en ligne et inversement *)
 let transpose m =
