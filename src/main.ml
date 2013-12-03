@@ -43,14 +43,14 @@ let main () =
     show ds display;
     wait_key ();
     (* Filtre passe bas *)
-    let img_convolved = Img.sharpen m in
+    let img_convolved = Img.sharpen ds_mat in
     show (Matrix.to_img img_convolved) display;
     wait_key();
 
 	    let ds = Matrix.to_img ( Img.reverse m ) in
 	    show ds display;
 	    wait_key ();
-            let angle = Img.hough m in
+            let angle = Img.hough img_convolved in
             print_float angle;
             let ds = Matrix.to_img ( Img.rotate m angle ) in
             show ds display;
