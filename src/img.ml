@@ -61,17 +61,17 @@ let reverse input =
 (*Best rotation sans detection d'angle EU*)
 let rotate input angle =
   let (w,h) = Matrix.get_dims input in
-  let angle_tmp = ((angle *. 2. *. 3.141592653589793) /. 360.)
-  -. (3.141592653589793 /. 2.) in
+  let pi = 2. *. acos(0.) in
+  let angle_tmp = pi *. ((0. -. angle) /. 180.) +. pi /. 2. in
   let wf = (float_of_int w) /. 2.0 in
   let hf = (float_of_int h) /. 2.0 in
     let f x y =
         begin
             let i = float_of_int x  in
             let j = float_of_int y  in
-            let x2 = int_of_float ((i -. wf) *. (sin angle_tmp) +.
+            let x2 = int_of_float ((i -. wf) *. (sin angle_tmp) -.
                                    (j -. hf) *. (cos angle_tmp) +. wf) in
-            let y2 = int_of_float((i -. wf) *. (cos angle_tmp) -.
+            let y2 = int_of_float((i -. wf) *. (cos angle_tmp) +.
                                    (j -. hf) *. (sin angle_tmp) +. hf) in
             if (x2 >= 0 && x2 < w) && (y2 >= 0 && y2 < h) then
                 Matrix.get input x2 y2

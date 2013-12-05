@@ -39,24 +39,31 @@ begin
     let ds = Matrix.to_img ( m ) in
     show img display;
     wait_key ();
+    print_string "return\n";
+    flush_all();
     Img.image2grey img newSurface;
     print_string "image2greyed\n";
     flush_all ();
     show newSurface display;
     wait_key ();
+    print_string "return\n";
+    flush_all();
     (* Filtre passe bas *)
     Img.sharpen m m;
     print_string "sharpened\n";
     flush_all ();
     show (Matrix.to_img m) display;
     wait_key();
-
+    print_string "return\n";
+    flush_all();
             let rev = Img.reverse m in
             print_string "reversed\n";
             flush_all();
             let ds = Matrix.to_img ( rev ) in
             show ds display;
             wait_key ();
+            print_string "return\n";
+            flush_all();
             let angle = Img.hough m in
             print_float angle;
             let rot = Img.rotate m angle in
