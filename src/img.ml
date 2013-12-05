@@ -35,32 +35,31 @@ let seuil matrix =
         end
 
 (*Binarisation d'une matrice *)
-let binarize m s =
-  let (w,h) = Matrix.get_dims m in
+let binarize inp out s =
+  let (w,h) = Matrix.get_dims inp in
   let f x y =
-    if (Matrix.get m x y) >= s then
+    if (Matrix.get inp x y) >= s then
       255
     else
       0
   in
-  Matrix.init w h f
+  Matrix.modify out f
 
 (*Best inversement d'image EU*)
 let reverse input = 
-	let (w,h) = Matrix.get_dims input in
-		let f x y = 
-	begin
-	   let x_alternate = w - x in
-	   if (x_alternate >= 0 && x_alternate < w) then
-		Matrix.get input x_alternate y
-	   else 
-		0
-	end in
+        let (w,h) = Matrix.get_dims input in
+                let f x y = 
+        begin
+           let x_alternate = w - x in
+           if (x_alternate >= 0 && x_alternate < w) then
+                Matrix.get input x_alternate y
+           else 
+                0
+        end in
   Matrix.init w h f
 
 (*Best rotation sans detection d'angle EU*)
 let rotate input angle =
-  let input = reverse input in
   let (w,h) = Matrix.get_dims input in
   let angle_tmp = ((angle *. 2. *. 3.141592653589793) /. 360.)
   -. (3.141592653589793 /. 2.) in
@@ -71,17 +70,15 @@ let rotate input angle =
             let i = float_of_int x  in
             let j = float_of_int y  in
             let x2 = int_of_float ((i -. wf) *. (sin angle_tmp) +.
-                                   (j -. hf) *. (cos angle_tmp) +. hf) in
+                                   (j -. hf) *. (cos angle_tmp) +. wf) in
             let y2 = int_of_float((i -. wf) *. (cos angle_tmp) -.
                                    (j -. hf) *. (sin angle_tmp) +. hf) in
             if (x2 >= 0 && x2 < w) && (y2 >= 0 && y2 < h) then
                 Matrix.get input x2 y2
             else 
-	        0 
+                0 
         end in
     Matrix.init w h f
-
-(*BEst hough EU*)
 
 (* matrice est un tableau de pixel *)
 let hough matrice =
@@ -149,22 +146,22 @@ let level_to_int c =
 let bounded c =
   max 0 (min c 255)
  
-let convolve_value ~img ~kernel ~divisor ~offset =
-  let (width, height) = Matrix.get_dims img in
+let convolve_value inp out kernel divisor offset =
+  let (width, height) = Matrix.get_dims inp in
  
-  let conv = convolve_get_value img kernel divisor offset in
+  let conv = convolve_get_value inp kernel divisor offset in
   
   let f x y = 
     let level = conv x y in
     let level = level_to_int level in
     bounded level in
-  Matrix.init width height f
+  Matrix.modify out f
 
-let sharpen img =
+let sharpen inp out=
     let kernel = [|
         [| -1.; -1.; -1. |];
         [| -1.;  9.; -1. |];
         [| -1.; -1.; -1. |];|] 
     in
-    convolve_value ~img ~kernel ~divisor:1.0 ~offset:0.0
+    convolve_value inp out kernel 1.0 0.0
     

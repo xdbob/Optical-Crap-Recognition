@@ -10,6 +10,7 @@ let init w h f =
   done;
   tab
 
+
 (* retourne la largeur d'une matrice *)
 let width m = 
   Bigarray.Array2.dim1 m
@@ -21,12 +22,26 @@ let height m =
 let get_dims m =
   (width m, height m)
 
+(* Même principe que init mais sur une matrice existante *)
+let modify m f =
+  let (w,h) = get_dims m in
+  for i=0 to w-1 do
+    for j=0 to h-1 do
+      m.{i,j} <- f i j
+    done
+  done
+
 (* Met l'élément v à l'emplacement x y ) *)
 let set m x y v =
   m.{x,y} <- v
 
 let get m x y =
   m.{x,y}
+
+(* Extrait une ligne d'une matrice *)
+let extract m line =
+  let f x = get m x line in
+  Array.init (width m) f
 
 let iter f m =
   let (w,h) = get_dims m in

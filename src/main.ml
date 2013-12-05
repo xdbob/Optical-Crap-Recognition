@@ -23,7 +23,7 @@ let show img dst =
     Sdlvideo.flip dst
  
 let main () =
-  begin
+begin
     if Array.length (Sys.argv) < 2 then
       failwith "Il manque le nom du fichier!";
     sdl_init ();
@@ -33,26 +33,36 @@ let main () =
     let display = Sdlvideo.set_video_mode w h [`DOUBLEBUF] in
     let newSurface = Sdlvideo.create_RGB_surface_format img [] w h in
     let m = Matrix.from_img img in
-    let ds_mat = Img.binarize m (Img.seuil m) in
-    let ds = Matrix.to_img ( ds_mat ) in
+    Img.binarize m m (Img.seuil m);
+    print_string "binarized\n";
+    flush_all ();
+    let ds = Matrix.to_img ( m ) in
     show img display;
     wait_key ();
     Img.image2grey img newSurface;
+    print_string "image2greyed\n";
+    flush_all ();
     show newSurface display;
     wait_key ();
-    show ds display;
-    wait_key ();
     (* Filtre passe bas *)
-    let img_convolved = Img.sharpen ds_mat in
-    show (Matrix.to_img img_convolved) display;
+    Img.sharpen m m;
+    print_string "sharpened\n";
+    flush_all ();
+    show (Matrix.to_img m) display;
     wait_key();
 
-	    let ds = Matrix.to_img ( Img.reverse m ) in
-	    show ds display;
-	    wait_key ();
-            let angle = Img.hough img_convolved in
+            let rev = Img.reverse m in
+            print_string "reversed\n";
+            flush_all();
+            let ds = Matrix.to_img ( rev ) in
+            show ds display;
+            wait_key ();
+            let angle = Img.hough m in
             print_float angle;
-            let ds = Matrix.to_img ( Img.rotate m angle ) in
+            let rot = Img.rotate m angle in
+            print_string "rotated\n";
+            flush_all();
+            let ds = Matrix.to_img ( rot ) in
             show ds display;
             wait_key ();
     (* on quitte *)
