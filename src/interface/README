@@ -1,0 +1,2 @@
+Pour compiley :
+ocamlc -I +lablgtk2 -o Intergraph lablgtk.cma gtkInit.cmo hello2.ml
