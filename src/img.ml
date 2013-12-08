@@ -1,5 +1,5 @@
 (* Intensité luminseuse d'un pixel *)
-let level (r,g,b) = ( 0.3 *. float_of_int r +. 0.59 *. float_of_int g +. 0.11 *. float_of_int b ) /. 255.0
+let level (r,g,b) = ( 0.299 *. float_of_int r +. 0.587 *. float_of_int g +. 0.114 *. float_of_int b ) /. 255.0
 
 (* Passage d'un pixel en niveau de gris *)
 let color2grey x = let z = int_of_float ( ( level x ) *. 255.0 ) in (z,z,z)

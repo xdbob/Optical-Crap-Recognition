@@ -1,2 +1,3 @@
 Pour compiley :
-ocamlc -I +lablgtk2 -o Intergraph lablgtk.cma gtkInit.cmo hello2.ml
+ocamlc -I +lablgtk2 -o Intergraph lablgtk.cma gtkInit.cmo  hello2.ml
+ou       	       sdz		 		   sdz.ml

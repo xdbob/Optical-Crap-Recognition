@@ -1,5 +1,3 @@
-(* file: hello2.ml *)
-
 let clicked msg () =
   print_endline msg;
   flush stdout
@@ -18,7 +16,7 @@ let main () =
   button#connect#clicked ~callback:(clicked "lol");
   
   let button = GButton.button ~label:"Button 2 qui affiche 'lul' dans la console" ~packing:box1#pack () in
-  button#connect#clicked ~callback:(clicked "lul");
+  button#connect#clicked ~callback:(wait_key ());
 
   let button = GButton.button ~label:"Quit" ~packing:box1#pack () in
   button#connect#clicked ~callback:window#destroy;
