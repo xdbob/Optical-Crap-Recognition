@@ -176,6 +176,7 @@ let greylevel () =
       Sdlvideo.save_BMP img2 "TMP/image_tmp.bmp";
     end;
   imageapercu (); 
+  picture_area#set_file "TMP/image_apercu.bmp";
 in
 
 let noiseelimination () =
@@ -186,6 +187,7 @@ let noiseelimination () =
       Sdlvideo.save_BMP (Matrix.to_img img1) "TMP/image_tmp.bmp";
     end;
   imageapercu ();
+  picture_area#set_file "TMP/image_apercu.bmp";
 in
 
 let binarisation () =
@@ -196,6 +198,7 @@ let binarisation () =
       Sdlvideo.save_BMP (Matrix.to_img m) "TMP/image_tmp.bmp";
     end;
   imageapercu ();
+  picture_area#set_file "TMP/image_apercu.bmp";
  in
 
 let linedetect () =
@@ -212,7 +215,6 @@ let linedetect () =
     end;
   imageapercu ();
   picture_area#set_file "TMP/image_apercu.bmp";
-  (*copy_ref "TMP/image_tmp.bmp" () *)
   in
 
 
