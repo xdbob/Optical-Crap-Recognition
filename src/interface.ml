@@ -2,10 +2,10 @@ let _ = GMain.init ()
 
 (*----------- RANDOM AUTHORS ------------- *)
 let randomliste =    
-      let zero = "Fabien Gregoire" in
-      let un = "Valentin Baudry" in
-      let deux = "Maxime Orefice" in
-      let trois = "Etienne Brouzes" in
+      let zero = "Kevin Avognon" in
+      let un = "Antoine Damhet" in
+      let deux = "Gonzague Bouniol de Gineste" in
+      let trois = "Corentin Watts" in
       Random.self_init();
       match (Random.int 4) with
       |0 -> [zero; deux; un; trois]
@@ -17,15 +17,14 @@ let randomliste =
 let show () =
   let dialog = 
     GWindow.about_dialog 
-      ~name:"OCRaml" 
+      ~name:"Optical Crap Recognition" 
       ~version:"v2.0"
       ~authors: randomliste
-      ~copyright:"Copyright : IllégiTeam"
-      ~license:("OCRaml est un logiciel OCR gratuit,"
-    		^" réalisé par quatre membres de l'EPITA")
+      ~copyright:"Copyright 2013"
+      ~license:("")
       ~icon_name:"logo.png"
-      ~website:"http://OCRaml.zxq.net"
-      ~website_label:"OCRaml.zxq.net"
+      ~website:"http://opticalcraprecognition.wordpress.com"
+      ~website_label:"opticalcraprecognition.wordpress.com"
       ~position:`CENTER_ON_PARENT
       ~destroy_with_parent:true () in
     dialog#set_logo(GdkPixbuf.from_file "logo.png");
@@ -177,6 +176,8 @@ let greylevel () =
     end;
   imageapercu (); 
   picture_area#set_file "TMP/image_apercu.bmp";
+  copy_ref "TMP/image_tmp.bmp";
+  Gc.compact ()
 in
 
 let noiseelimination () =
@@ -188,6 +189,7 @@ let noiseelimination () =
     end;
   imageapercu ();
   picture_area#set_file "TMP/image_apercu.bmp";
+  Gc.compact ()
 in
 
 let binarisation () =
@@ -199,6 +201,7 @@ let binarisation () =
     end;
   imageapercu ();
   picture_area#set_file "TMP/image_apercu.bmp";
+  Gc.compact ()
  in
 
 let linedetect () =
@@ -215,6 +218,7 @@ let linedetect () =
     end;
   imageapercu ();
   picture_area#set_file "TMP/image_apercu.bmp";
+  Gc.compact ()
   in
 
 
@@ -233,7 +237,9 @@ let rotationcpr () =
    end; 
   imageapercu ();
   picture_area#set_file "TMP/image_apercu.bmp";
-  copy_ref "TMP/image_tmp.bmp" in
+  copy_ref "TMP/image_tmp.bmp" ;
+  Gc.compact ()
+in
 
   
 (* -------------------  PRETREATMENT  ---------------------- *)
@@ -352,71 +358,14 @@ let frame_texte = GBin.frame
 
 let textbox = GText.view
   ~wrap_mode:`WORD 
-  ~packing:frame_texte#add () in  
-textbox#misc#modify_font_by_name "Monospace 10";
-let stringlol = 
-"     .d88888b.   .d8888b.  8888888b.                         888 
-    d88P   Y88b d88P  Y88b 888   Y88b                        888 
-    888     888 888    888 888    888                        888 
-    888     888 888        888   d88P  8888b.  88888b.d88b.  888 
-    888     888 888        8888888P        88b 888  888  88b 888 
-    888     888 888    888 888 T88b   .d888888 888  888  888 888 
-    Y88b. .d88P Y88b  d88P 888  T88b  888  888 888  888  888 888 
-      Y88888P     Y8888P   888   T88b  Y888888 888  888  888 888
-
-
-               888     888       .d8888b.       .d8888b.  
-               888     888      d88P  Y88b     d88P  Y88b 
-               888     888             888     888    888 
-               Y88b   d88P           .d88P     888    888 
-                Y88b d88P        .od888P       888    888 
-                 Y88o88P        d88P           888    888 
-                  Y888P         888        d8b Y88b  d88P 
-                   Y8P          888888888  Y8P   Y8888P      "
-
- in textbox#buffer#set_text(stringlol);
+  ~packing:frame_texte#add ()   
+ in textbox#buffer#set_text("Optical Crap Recognition by Obscur Code Researchers");
 
 (*------------------EXTRACTION BUTTON ------------------- *)
 let extraction () =
 texte := "";
 
-let lst = ref [] in
-
-let to_couple_x liste =
-  let rec couple_x = function
-    | [] -> []
-    | e1::e2::l -> (e1,e2) :: (couple_x l)
-    | _ -> []
-  in couple_x (List.rev liste) in
-
-
-let moy_char liste =
-  let rec medium_space liste_x = match liste_x with
-    |[] -> 0
-    |(e1,e2)::l -> (e2 - e1) + medium_space l
-  in ((medium_space (liste)) / (List.length liste)) in
-
-
-let calcul_dist_char liste =
-  let rec calcul_dist liste accu = match liste with
-    |[] -> failwith "Liste paire!"
-    |_::[] -> (List.rev (accu))
-    |(e1,e2)::(e3,e4)::l -> calcul_dist ((e3,e4)::l) ((e3-e2)::accu)
-  in calcul_dist liste [] in
-
-
-let is_space listeX =
-let new_listX = to_couple_x listeX in
-  let moyenne_char = moy_char new_listX in
-  let distance_char = calcul_dist_char new_listX in
-  let vect = Array.make (List.length distance_char) false in
-    for i = 0 to (List.length (distance_char) - 1) do
-      if (((List.nth distance_char i) > (moyenne_char/2)) || ((List.nth distance_char i) < 0)) then
-        vect.(i) <- true
-    done;
-    vect in
-	
-let vect = is_space (!lst) in
+let vect = Segmentation.is_space (!Segmentation.list_x) in
   for i = 0 to Array.length vect - 1 do
     texte := (!texte)^"x";
     if vect.(i) then
@@ -432,7 +381,7 @@ let extraction_button = GButton.button
    ignore (extraction_button#connect#clicked ~callback:(extraction););
 
 (* -----------------CORRECTION BUTTON ------------------- *)
-
+(*
 let correction () = 
 if (GtkSpell.is_attached(textbox)) then 
     GtkSpell.detach(textbox)
@@ -444,7 +393,7 @@ let correction_button = GButton.button
    ~callback:(correction));
   ignore(GMisc.image ~stock:`SPELL_CHECK
    ~packing:correction_button#set_image ());
-
+*)
 
 (* -------------------- SAVE BUTTON ---------------------- *)
 

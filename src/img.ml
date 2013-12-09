@@ -156,9 +156,9 @@ let convolve_value inp out kernel divisor offset =
 
 let sharpen inp out=
     let kernel = [|
-        [| -1.; -1.; -1. |];
-        [| -1.;  9.; -1. |];
-        [| -1.; -1.; -1. |];|] 
+        [| 2.; 5.; 2. |];
+        [| 5.;  20.; 5. |];
+        [| 2.; 5.; 2. |];|] 
     in
-    convolve_value inp out kernel 1.0 0.0
+    convolve_value inp out kernel 48. 0.0
     
