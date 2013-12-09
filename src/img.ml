@@ -36,7 +36,6 @@ let seuil matrix =
 
 (*Binarisation d'une matrice *)
 let binarize inp out s =
-  let (w,h) = Matrix.get_dims inp in
   let f x y =
     if (Matrix.get inp x y) >= s then
       255
@@ -146,9 +145,7 @@ let level_to_int c =
 let bounded c =
   max 0 (min c 255)
  
-let convolve_value inp out kernel divisor offset =
-  let (width, height) = Matrix.get_dims inp in
- 
+let convolve_value inp out kernel divisor offset = 
   let conv = convolve_get_value inp kernel divisor offset in
   
   let f x y = 

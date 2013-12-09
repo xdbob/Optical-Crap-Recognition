@@ -10,6 +10,9 @@ let init w h f =
   done;
   tab
 
+let empty w h =
+    let f x y = 0 in
+    init w h f
 
 (* retourne la largeur d'une matrice *)
 let width m = 
@@ -171,4 +174,37 @@ let get_bigarray img x y =
 	let _, arr,_,_ = img in
 	Bigarray.Array2.get arr x y
 
+let matrix2image matrix img =
+  for i = 0 to width matrix -1 do
+    for j = 0 to height matrix-1 do
+        if (Bigarray.Array2.get matrix i j = 255) then
+            Sdlvideo.put_pixel_color img i j (255,255,255)
+        else
+            Sdlvideo.put_pixel_color img i j (0,0,0)
+    done;
+  done;
+    img
 
+let image2emptymatrix pictureval =
+            let width= (Sdlvideo.surface_info pictureval).Sdlvideo.w and
+                height = (Sdlvideo.surface_info pictureval).Sdlvideo.h in
+            let f x y = 255 in
+            let matrice1 = init width height f in
+            matrice1
+
+let emptymatrix2image pict2 =
+ let emptymatrix = image2emptymatrix (pict2) in
+  matrix2image emptymatrix pict2
+
+let image2matrix matrix img =
+  let width = ((Sdlvideo.surface_info img).Sdlvideo.w) and
+    height = ((Sdlvideo.surface_info img).Sdlvideo.h) in
+      for i = 0 to width -1 do
+    for j = 0 to height -1 do
+      if (Sdlvideo.get_pixel_color img i j) = (255,255,255) then
+        set matrix i j 255
+          else
+        set matrix i j 0
+        done;
+      done;
+        matrix
